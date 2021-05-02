@@ -1,0 +1,21 @@
+{
+    "name": "midkard/wp-list-table",
+    "version": "0.1.0",
+    "type": "library",
+    "description": "List tables for wordpress",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Midkard",
+            "email": "dimigam@yandex.ru"
+        }
+    ],
+    "require": {
+      "ext-json": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "midkard\\wp_list_table\\": "src"
+        }
+    }
+}
