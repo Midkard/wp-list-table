@@ -512,6 +512,7 @@ abstract class ListTable
     protected function enqueueScript()
     {
         wp_enqueue_script( 'tags-suggest' );
+        wp_enqueue_script( 'media' );
         $this->table->printJs();
 
         require_once dirname( __DIR__ ) . '/assets/script.php';

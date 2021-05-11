@@ -39,6 +39,7 @@
         }
 
         let $valueArea;
+        let imageFrame;
         if ( column ) {
             let newHtml, choosed;
             switch (column.type) {
@@ -46,6 +47,7 @@
                 case 'radio':
                     newHtml = '<select id="new-value">';
                     for (let key in column.choices) {
+                        if (!column.choices.hasOwnProperty(key)) continue;
                         let selected = (column.choices[key] === oldValue) || (key === oldValue) ? 'selected' : '';
                         newHtml += `<option value='${key}' ${selected}>${column.choices[key]}</option>`;
                     }
@@ -58,7 +60,8 @@
                 case 'checkbox':
                     newHtml = '<select id="new-value" multiple style="width: 100%; max-width:200px">';
                     choosed = oldValue.split(',').map( function(el) { return el.trim(); } );
-                    for (var key in column.choices) {                    
+                    for (let key in column.choices) {
+                        if (!column.choices.hasOwnProperty(key)) continue;
                         let selected = (~choosed.indexOf(column.choices[key])) || (~choosed.indexOf(key)) ? 'selected' : '';
                         newHtml += `<option value='${key}' ${selected}>${column.choices[key]}</option>`;
                     }
@@ -89,12 +92,36 @@
                     $valueArea = $cell.find( 'input' );
                     save();
                     return;
+                case 'image':
+                    if (! imageFrame) {
+                        imageFrame = wp.media({
+                            title: 'Выберите изображение для СЕО',
+                            button: {
+                                text: 'Выбрать'
+                            },
+                            multiple: false,
+                        });
+                        imageFrame.on('select', function () {
+                            let attachment = imageFrame.state().get('selection').first().toJSON();
+                            $valueArea.val(attachment.id);
+                            save();
+                        });
+                        imageFrame.on('close', function () {
+                            save();
+                        });
+                    }
+                    $valueArea = $cell.children( 'input' );
+                    oldValue = $valueArea.val();
+                    imageFrame.open();
+                    return;
 
                 case 'permalink':                    
                     editPermalink($cell);
                     $cell.find('.edit-slug-buttons').html(buttonsHtml);
                     oldValue = $cell.find( '.editable-post-name-full' ).text();
                     $valueArea = $cell.find( 'input' );
+                    break;
+                default:
                     break;
 
             }
@@ -131,16 +158,16 @@
 
         function save() {
 
-            var newVal = $valueArea.val();
+            let newVal = $valueArea.val();
             if (column && 'onoff' === column.type) {
                 newVal = $valueArea[0].checked;
             }
 
-            if ( (! column || 'onoff' !== column.type) && newVal == oldValue ) {
+            if ( (! column || 'onoff' !== column.type) && newVal === oldValue ) {
                 cancel();
                 return;
             }
-            var object = getRowObject($cell);
+            const object = getRowObject($cell);
 
             $.post(
                     ajaxurl,
@@ -182,7 +209,7 @@
         // If more than 1/4th of 'full' is '%', make it empty.
         let c = 0;
         for ( let i = 0; i < full.length; ++i ) {
-            if ( '%' == full.charAt( i ) )
+            if ( '%' === full.charAt( i ) )
                 c++;
         }
         let slug_value = (c > full.length / 4) ? '' : full;
@@ -210,12 +237,12 @@
      *
      *
      * @param   {Element} o DOM row object to get the id for.
-     * @returns {string}   The post id extracted from the table row in the object.
+     * @returns {Object}   The post id extracted from the table row in the object.
      */
     function getRowObject( o ) {
-    
-        var id = jQuery( o ).closest( 'tr' ).attr( 'id' ),
-                parts = id.split( '#' );
+
+        const id = jQuery(o).closest('tr').attr('id'),
+            parts = id.split('#');
         return {
             type: parts[0],
             id: parts[parts.length - 1]
