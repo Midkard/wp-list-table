@@ -14,7 +14,7 @@
      * @param {Element} el 
      * @returns void
      */
-    function quickEdit( el ) {
+    function quickEdit( el, newVal = null ) {
         if (editEnabled) {
             return;
         }
@@ -93,6 +93,13 @@
                     save();
                     return;
                 case 'image':
+                    $valueArea = $cell.children( 'input' );
+                    oldValue = $valueArea.val();
+                    if (null !== newVal) {
+                        $valueArea.val(newVal);
+                        save();
+                        return;
+                    }
                     if (! imageFrame) {
                         imageFrame = wp.media({
                             title: 'Выберите изображение для СЕО',
@@ -110,8 +117,6 @@
                             save();
                         });
                     }
-                    $valueArea = $cell.children( 'input' );
-                    oldValue = $valueArea.val();
                     imageFrame.open();
                     return;
 
@@ -223,6 +228,10 @@
         window.tableColumns = window.tableColumns || [];
         $( document ).on( 'click', 'td.quick-edit .edit-slug', function (e) {
             quickEdit( $(this).closest('td')[0] );
+            e.stopPropagation();
+        } );
+        $( document ).on( 'click', 'td.quick-edit .clear-value', function (e) {
+            quickEdit( $(this).closest('td')[0], '' );
             e.stopPropagation();
         } );
         $( document ).on('click', 'td.quick-edit', function () {
