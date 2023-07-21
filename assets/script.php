@@ -154,8 +154,11 @@
             }
         });
 
+        $cell.trigger('added-input');
+
         function cancel() {
             $cell.html( revert_e );
+            $cell.trigger('removed-input');
             setTimeout(function(){
                 editEnabled = false;
             },200);            
@@ -186,6 +189,7 @@
                     },
                     function ( data ) {
                         $cell.html( data );
+                        $cell.trigger('removed-input');
                         editEnabled = false;
                     }
             );            
