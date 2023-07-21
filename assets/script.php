@@ -23,6 +23,7 @@
         const $cell = $( el );
         const buttonsHtml = '<div><button type="button" class="save button button-small">ОК</button> <button type="button" class="cancel button-link">Отмена</button></div>';
 
+        $cell.trigger('before-edit');
         // Save current content to revert to when cancelling.
         let revert_e = $cell.html();
         $cell.find('.placeholder').remove();
