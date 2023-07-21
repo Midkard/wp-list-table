@@ -1,6 +1,6 @@
 {
     "name": "midkard/wp-list-table",
-    "version": "0.2.2",
+    "version": "0.2.3",
     "type": "library",
     "description": "List tables for wordpress",
     "license": "MIT",

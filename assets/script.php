@@ -166,6 +166,8 @@
 
         function save() {
 
+            $cell.trigger('before-save');
+
             let newVal = $valueArea.val();
             if (column && 'onoff' === column.type) {
                 newVal = $valueArea[0].checked;
